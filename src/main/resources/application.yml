@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driver-class-name: org.gjt.mm.mysql.Driver
+    url: jdbc:mysql:///shiro-web
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+#  redis:
+#    host: 49.233.115.171
+#    port: 6379
+#    password: ZhengJinWei123!
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/*.xml
+
+shiro:
+  loginUrl: /login.html
+  unauthorizedUrl: /401.html   # 针对过滤器链生效，针对注解是不生效的
+
