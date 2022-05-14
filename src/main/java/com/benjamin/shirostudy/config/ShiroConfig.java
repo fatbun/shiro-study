@@ -1,6 +1,9 @@
 package com.benjamin.shirostudy.config;
 
+import com.benjamin.shirostudy.cache.RedisCacheManager;
 import com.benjamin.shirostudy.realm.ShiroRealm;
+import com.benjamin.shirostudy.session.DefaultRedisWebSessionManager;
+import com.benjamin.shirostudy.session.RedisSessionDAO;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -20,30 +23,30 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-//    @Bean
-//    public SessionManager sessionManager(RedisSessionDAO sessionDAO) {
-//        DefaultRedisWebSessionManager sessionManager = new DefaultRedisWebSessionManager();
-//        sessionManager.setSessionDAO(sessionDAO);
-//        return sessionManager;
-//    }
+    @Bean
+    public SessionManager sessionManager(RedisSessionDAO sessionDAO) {
+        DefaultRedisWebSessionManager sessionManager = new DefaultRedisWebSessionManager();
+        sessionManager.setSessionDAO(sessionDAO);
+        return sessionManager;
+    }
 
-
-//    @Bean
-//    public DefaultWebSecurityManager securityManager(ShiroRealm realm, SessionManager sessionManager, RedisCacheManager redisCacheManager){
-//        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-//        securityManager.setRealm(realm);
-//        securityManager.setSessionManager(sessionManager);
-//        // 设置CacheManager，提供与Redis交互的Cache对象
-//        securityManager.setCacheManager(redisCacheManager);
-//        return securityManager;
-//    }
 
     @Bean
-    public DefaultWebSecurityManager securityManager(ShiroRealm realm){
+    public DefaultWebSecurityManager securityManager(ShiroRealm realm, SessionManager sessionManager, RedisCacheManager redisCacheManager){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(realm);
+        securityManager.setSessionManager(sessionManager);
+        // 设置CacheManager，提供与Redis交互的Cache对象
+        securityManager.setCacheManager(redisCacheManager);
         return securityManager;
     }
+
+//    @Bean
+//    public DefaultWebSecurityManager securityManager(ShiroRealm realm){
+//        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+//        securityManager.setRealm(realm);
+//        return securityManager;
+//    }
 
     @Bean
     public DefaultShiroFilterChainDefinition shiroFilterChainDefinition(){
@@ -53,10 +56,10 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login.html","anon");
         filterChainDefinitionMap.put("/user/logout","logout");
         filterChainDefinitionMap.put("/user/**","anon");
-//        filterChainDefinitionMap.put("/item/rememberMe","user");
-//        filterChainDefinitionMap.put("/item/authentication","authc");
+        filterChainDefinitionMap.put("/item/rememberMe","user");
+        filterChainDefinitionMap.put("/item/authentication","authc");
 //        filterChainDefinitionMap.put("/item/select","rolesOr[超级管理员,运营]");
-//        filterChainDefinitionMap.put("/item/delete","perms[item:delete,item:insert]");
+        filterChainDefinitionMap.put("/item/delete","perms[item:delete,item:insert]");
         filterChainDefinitionMap.put("/**","authc");
 
         shiroFilterChainDefinition.addPathDefinitions(filterChainDefinitionMap);
